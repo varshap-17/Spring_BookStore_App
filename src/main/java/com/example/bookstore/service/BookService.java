@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -44,9 +43,9 @@ public class BookService implements IBookRepo{
         bookRepository.deleteById(bookId);
         return null;
     }
-    public Optional<Book> findById(Long bookId){
+    public Book findById(Long bookId){
         log.info("book data by id");
-        return bookRepository.findById(bookId);
+        return bookRepository.findById(bookId).orElse(null);
     }
     public List<Book> findByDescending(Integer price){
         log.info("descending order");
