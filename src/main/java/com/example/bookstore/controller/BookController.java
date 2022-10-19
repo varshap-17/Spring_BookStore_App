@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/book")
 public class BookController {
@@ -52,7 +50,7 @@ public class BookController {
     //find data by id method
     @GetMapping("/byId/{bookId}")
     public ResponseEntity<ResponseDto> bookById(@PathVariable Long bookId){
-        Optional<Book> book=bookService.findById(bookId);
+        Book book=bookService.findById(bookId);
         ResponseDto responseDto=new ResponseDto("get data by id: "+bookId+" successfully",book);
         return new ResponseEntity<>(responseDto,HttpStatus.OK);
     }
