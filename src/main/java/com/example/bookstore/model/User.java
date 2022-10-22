@@ -19,6 +19,22 @@ public class User {
     private String address;
     private String email;
     private String password;
+    private String token;
+    private Boolean verified;
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public User(){
 
