@@ -5,6 +5,7 @@ import com.example.bookstore.dto.ResponseDto;
 import com.example.bookstore.dto.UserDto;
 import com.example.bookstore.model.User;
 import com.example.bookstore.service.UserService;
+import com.example.bookstore.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    TokenUtil tokenUtil;
     //example statement
     @GetMapping("/example")
     public String example(@RequestParam String name){
@@ -27,16 +30,14 @@ public class UserController {
     //save method
     @PostMapping("/post")
     public ResponseEntity<ResponseDto> userSave(@Valid @RequestBody UserDto userDto){
-        User user=null;
-        user=userService.createData(userDto);
-        ResponseDto responseDto=new ResponseDto("saved data successfully",user);
-        return new ResponseEntity<ResponseDto>(responseDto, HttpStatus.OK);
+        return userService.createAccount(userDto);
     }
     //update method
-    @PutMapping("/update/{userid}")
-    public ResponseEntity<ResponseDto> userUpdate(@Valid @PathVariable Long userid,@RequestBody UserDto userDto){
-        User user=userService.updateData(userid,userDto);
-        ResponseDto responseDto=new ResponseDto("updated data successfully",user);
+    @PutMapping("/update/{token}")
+    public ResponseEntity<ResponseDto> userUpdate(@Valid @PathVariable String token,@RequestBody UserDto userDto){
+        Long tokenId=tokenUtil.decodeToken(token);
+        User user=userService.updateData(tokenId,userDto);
+        ResponseDto responseDto=new ResponseDto("updated data successfully: "+token,user);
         return new ResponseEntity<ResponseDto>(responseDto,HttpStatus.OK);
     }
     //retrieve data method
@@ -45,17 +46,19 @@ public class UserController {
         return userService.retrieveData();
     }
     //delete method
-    @DeleteMapping("/delete/{userid}")
-    public ResponseEntity<ResponseDto> userDelete(@PathVariable Long userid){
-        User user=userService.deleteData(userid);
-        ResponseDto responseDto=new ResponseDto("userid: "+userid+" is deleted",user);
+    @DeleteMapping("/delete/{token}")
+    public ResponseEntity<ResponseDto> userDelete(@PathVariable String token){
+        String tokenId= String.valueOf(tokenUtil.decodeToken(token));
+        User user=userService.deleteData(Long.valueOf(tokenId));
+        ResponseDto responseDto=new ResponseDto("userid: "+tokenId+" is deleted",user);
         return new ResponseEntity<ResponseDto>(responseDto,HttpStatus.OK);
     }
     //get data by id method
-    @GetMapping("/getId/{userid}")
-    public ResponseEntity<ResponseDto> userById(@PathVariable Long userid){
-        Optional<User> user=userService.findById(userid);
-        ResponseDto responseDto=new ResponseDto("get details by userid: "+userid,user);
+    @GetMapping("/getId/{token}")
+    public ResponseEntity<ResponseDto> userById(@PathVariable String token){
+        String tokenId= String.valueOf(tokenUtil.decodeToken(token));
+        Optional<User> user=userService.findById(Long.valueOf(tokenId));
+        ResponseDto responseDto=new ResponseDto("get details by userid: "+tokenId,user);
         return new ResponseEntity<ResponseDto>(responseDto,HttpStatus.OK);
     }
     //get data by firstname
@@ -70,6 +73,13 @@ public class UserController {
     public ResponseEntity<ResponseDto> userLogin(@RequestBody LoginDto loginDto){
         Optional<User> user= Optional.ofNullable(userService.login(loginDto));
         ResponseDto responseDto=new ResponseDto("get all details..."+loginDto,user);
+        return new ResponseEntity<>(responseDto,HttpStatus.OK);
+    }
+    //verify token
+    @GetMapping("/verify/{token}")
+    public ResponseEntity<ResponseDto> verifyUser(@PathVariable String token){
+        ResponseEntity<ResponseDto> user=userService.verify(token);
+        ResponseDto responseDto=new ResponseDto("user verified successfully",user);
         return new ResponseEntity<>(responseDto,HttpStatus.OK);
     }
 }
