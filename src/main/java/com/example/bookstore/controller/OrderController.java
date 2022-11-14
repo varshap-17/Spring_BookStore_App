@@ -16,28 +16,43 @@ import java.util.List;
 public class OrderController {
     @Autowired
     OrderService orderService;
-    //order placing method
+    /**
+     * Implemented orderPost method add the order details
+     * @param orderDto-as request body
+     * @return
+     */
     @PostMapping("/postorder")
     public ResponseEntity<ResponseDto> orderPost(@RequestBody OrderDto orderDto){
         Order order=orderService.placeOrder(orderDto);
         ResponseDto responseDto=new ResponseDto("saved data successful",order);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
-    //list all orders which is placed
+    /**
+     *Implemented getOrderList method by getting all order details
+     * @return
+     */
     @GetMapping("/getAll")
     public ResponseEntity<ResponseDto> getOrderList(){
         List<Order> orderList=orderService.getAllOrders();
         ResponseDto responseDto=new ResponseDto("get all orders",orderList);
         return new ResponseEntity<>(responseDto,HttpStatus.OK);
     }
-    //list all orders which is placed through order id
+    /**
+     *Implemented getOrderById method to list all orders which is placed through order id
+     * @param orderId-as path variable
+     * @return
+     */
     @GetMapping("/ById/{orderId}")
     public ResponseEntity<ResponseDto> getOrderById(@PathVariable Long orderId){
         Order order=orderService.getOrderById(orderId);
         ResponseDto responseDto=new ResponseDto("get order by id: "+orderId+" successfully",order);
         return new ResponseEntity<>(responseDto,HttpStatus.OK);
     }
-    //canceling the order through boolean
+    /**
+     *Implemented orderCancel method to canceling the order through boolean value
+     * @param orderId-as path variable
+     * @return
+     */
     @PutMapping("/cancel/{orderId}")
     public ResponseEntity<ResponseDto> orderCancel(@PathVariable Long orderId){
         Order order=orderService.cancelOrder(orderId);
