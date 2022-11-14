@@ -29,10 +29,6 @@ public class Order implements Serializable {
     @JoinColumn(name = "cart_id")
     @ManyToOne(fetch = FetchType.LAZY)
     public Cart cartId;
-
-//    @OneToMany(fetch = FetchType.LAZY,orphanRemoval = true)
-//    @org.hibernate.annotations.ForeignKey(name = "none")
-//    private List<Cart> carts;
     public Order(Cart cart, OrderDto orderDto){
         this.cartId= cart;
         orderData(orderDto);
